@@ -1,10 +1,10 @@
 import argparse
 import ast
 import importlib
+from collections import defaultdict
 from typing import Iterable, Tuple, Union, List, Dict
 
 import flake8.options.manager
-
 
 class ImportChecker:
     """
@@ -13,7 +13,7 @@ class ImportChecker:
 
     name = "flake8-import-restrictions"
     version = "1.0"
-    targetted_modules: Dict[int, List[str]] = {}
+    targetted_modules: Dict[int, List[str]] = defaultdict(list)
 
     def __init__(self, tree: ast.AST, filename: str):
         self.tree = tree
@@ -51,25 +51,25 @@ class ImportChecker:
             if isinstance(node, ast.ImportFrom):
                 yield from _i2001(node, ImportChecker.targetted_modules[2001])
                 yield from _i2040(node, ImportChecker.targetted_modules[2040])
-                yield from _i2041(node, ImportChecker.targetted_modules[2041])
-                yield from _i2042(node, ImportChecker.targetted_modules[2042])
+                yield from _i2041(node, self.filename, ImportChecker.targetted_modules[2041])
+                yield from _i2042(node, self.filename, ImportChecker.targetted_modules[2042])
                 yield from _i2043(node, ImportChecker.targetted_modules[2043])
                 yield from _i2044(node, ImportChecker.targetted_modules[2044])
                 yield from _i2045(node, ImportChecker.targetted_modules[2045])
 
 
 ERROR_MESSAGES = {
-    2000: "Generators in comprehension expression are on the same line.",
-    2001: "Different segments of a comprehension expression share a line.",
-    2002: "Multiple filter segments within a single comprehension expression.",
-    2003: "Multiline comprehension expression are forbidden.",
-    2004: "Singleline comprehension expression are forbidden.",
-    2020: "Different segments of a conditional expression share a line.",
-    2021: "Conditional expression used for assignment not surrounded by parantheses.",
-    2022: "Nested conditional expressions are forbidden.",
-    2023: "Multiline conditional expression are forbidden.",
-    2024: "Singleline conditional expression are forbidden.",
-    2025: "Conditional expressions are forbidden.",
+    2000: "a",
+    2001: "a",
+    2020: "a",
+    2021: "a",
+    2022: "a",
+    2040: "a",
+    2041: "a",
+    2042: "a",
+    2043: "a",
+    2044: "a",
+    2045: "a",
 }
 
 
@@ -77,7 +77,7 @@ def _error_tuple(error_code: int, node: ast.AST) -> Tuple[int, int, str, type]:
     return (
         node.lineno,
         node.col_offset,
-        f"C{error_code} {ERROR_MESSAGES[error_code]}",
+        f"I{error_code} {ERROR_MESSAGES[error_code]}",
         ImportChecker,
     )
 
@@ -120,7 +120,8 @@ def _i2020(node: ast.Import, targetted_modules: List[str]) -> Iterable[Tuple[int
     """
     for name in node.names:
         if "." in name.name and not name.asname:
-            return [_error_tuple(2020, node)]
+            yield _error_tuple(2020, node)
+            break
 
 def _i2021(node: ast.Import, targetted_modules: List[str]) -> Iterable[Tuple[int, int, str, type]]:
     """
@@ -165,7 +166,8 @@ def _i2043(node: ast.ImportFrom, targetted_modules: List[str]) -> Iterable[Tuple
     """
     for name in node.names:
         if name.name == "*":
-            return [_error_tuple(2043, node)]
+            yield _error_tuple(2043, node)
+            break
 
 def _i2044(node: ast.ImportFrom, targetted_modules: List[str]) -> Iterable[Tuple[int, int, str, type]]:
     """

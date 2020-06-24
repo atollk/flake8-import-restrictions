@@ -14,14 +14,14 @@ class Test_I2044(BaseTest):
         result = self.run_flake8(code, True)
         assert result == []
 
-    def test_pass_2(self):
+    def test_fail_1(self):
         code = """
         from .foo import bar
         """
         result = self.run_flake8(code, True)
-        assert result == []
+        assert result != []
 
-    def test_fail_1(self):
+    def test_fail_2(self):
         code = """
         from ..foo import bar
         """
