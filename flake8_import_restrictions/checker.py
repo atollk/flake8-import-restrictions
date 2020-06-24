@@ -82,6 +82,14 @@ def _error_tuple(error_code: int, node: ast.AST) -> Tuple[int, int, str, type]:
     )
 
 
+def _imports_submodule(filename: str, from_: str, impport_: str) -> bool:
+    """
+    Tests whether the statement "from from_ import import_" executed in the specified file
+    loads a module or a module element.
+    """
+    return False  # TODO
+
+
 def _i2000(tree: ast.AST, targetted_modules: List[str]) -> Iterable[Tuple[int, int, str, type]]:
     """
     Imports should only happen on module level, not locally.
@@ -134,22 +142,22 @@ def _i2040(node: ast.ImportFrom, targetted_modules: List[str]) -> Iterable[Tuple
     if len(node.names) > 1:
         yield _error_tuple(2040, node)
 
-def _imports_submodule(filename: str, node: ast.ImportFrom) -> bool:
-    return False  # TODO
 
 def _i2041(node: ast.ImportFrom, filename: str, targetted_modules: List[str]) -> Iterable[Tuple[int, int, str, type]]:
     """
     When using the from syntax, only submodules are imported, not module elements.
     """
-    if not _imports_submodule(filename, node):
-        yield _error_tuple(2041, node)
+    for name in node.names:
+        if not _imports_submodule(filename, "."*node.level + node.module, name.name):
+            yield _error_tuple(2041, node)
 
 def _i2042(node: ast.ImportFrom, filename: str, targetted_modules: List[str]) -> Iterable[Tuple[int, int, str, type]]:
     """
     When using the from syntax, only module elements are imported, not submodules.
     """
-    if _imports_submodule(filename, node):
-        yield _error_tuple(2042, node)
+    for name in node.names:
+        if _imports_submodule(filename, "."*node.level + node.module, name.name):
+            yield _error_tuple(2041, node)
 
 def _i2043(node: ast.ImportFrom, targetted_modules: List[str]) -> Iterable[Tuple[int, int, str, type]]:
     """
