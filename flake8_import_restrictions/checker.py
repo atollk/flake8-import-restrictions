@@ -102,7 +102,9 @@ def _i2000(
     Imports should only happen on module level, not locally.
     """
     for ancestor in ast.walk(node):
-        if isinstance(ancestor, ast.Import) or isinstance(ancestor, ast.ImportFrom):
+        if isinstance(ancestor, ast.Import) or isinstance(
+            ancestor, ast.ImportFrom
+        ):
             yield _error_tuple(2000, ancestor)
 
 

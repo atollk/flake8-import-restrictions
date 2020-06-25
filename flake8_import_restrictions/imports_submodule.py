@@ -27,7 +27,9 @@ def imports_submodule(
         return None
     if not hasattr(parent, import_):
         try:
-            importlib.import_module("." * level + from_ + "." + import_, package)
+            importlib.import_module(
+                "." * level + from_ + "." + import_, package
+            )
         except ImportError:
             return False
     return isinstance(getattr(parent, import_), types.ModuleType)
