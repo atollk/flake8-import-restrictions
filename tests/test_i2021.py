@@ -10,7 +10,7 @@ class Test_I2021(BaseTest):
         import os
         import sys as sy
         """
-        result = self.run_flake8(code, True)
+        result = self.run_flake8(code)
         assert result == []
 
     def test_pass_2(self):
@@ -18,19 +18,19 @@ class Test_I2021(BaseTest):
         from os import path, environ
         import sys
         """
-        result = self.run_flake8(code, True)
+        result = self.run_flake8(code)
         assert result == []
 
     def test_fail_1(self):
         code = """
         import os, sys
         """
-        result = self.run_flake8(code, True)
+        result = self.run_flake8(code)
         assert result != []
 
     def test_fail_2(self):
         code = """
         import curses.ascii, curses.panel
         """
-        result = self.run_flake8(code, True)
+        result = self.run_flake8(code)
         assert result != []

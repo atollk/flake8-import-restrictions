@@ -9,14 +9,14 @@ class Test_I2000(BaseTest):
         code = """
         import os
         """
-        result = self.run_flake8(code, True)
+        result = self.run_flake8(code)
         assert result == []
 
     def test_pass_2(self):
         code = """
         from os import *
         """
-        result = self.run_flake8(code, True)
+        result = self.run_flake8(code)
         assert result == []
 
     def test_pass_3(self):
@@ -29,7 +29,7 @@ class Test_I2000(BaseTest):
             except ImportError:
                 pass
         """
-        result = self.run_flake8(code, True)
+        result = self.run_flake8(code)
         assert result == []
 
     def test_fail_1(self):
@@ -37,7 +37,7 @@ class Test_I2000(BaseTest):
         class X:
             import os
         """
-        result = self.run_flake8(code, True)
+        result = self.run_flake8(code)
         assert result != []
 
     def test_fail_2(self):
@@ -45,5 +45,5 @@ class Test_I2000(BaseTest):
         def x():
             import os
         """
-        result = self.run_flake8(code, True)
+        result = self.run_flake8(code)
         assert result != []

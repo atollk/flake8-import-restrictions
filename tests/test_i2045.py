@@ -9,12 +9,12 @@ class Test_I2045(BaseTest):
         code = """
         import os.path as path
         """
-        result = self.run_flake8(code, True)
+        result = self.run_flake8(code)
         assert result == []
 
     def test_fail_1(self):
         code = """
         from os import path
         """
-        result = self.run_flake8(code, True)
+        result = self.run_flake8(code)
         assert result != []

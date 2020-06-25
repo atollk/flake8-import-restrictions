@@ -1,6 +1,3 @@
-import ast
-
-from flake8_import_restrictions.checker import ImportChecker
 from tests.util import BaseTest
 
 
@@ -13,19 +10,19 @@ class Test_I2044(BaseTest):
         import os
         from os import path
         """
-        result = self.run_flake8(code, True)
+        result = self.run_flake8(code)
         assert result == []
 
     def test_fail_1(self):
         code = """
         from .foo import bar
         """
-        result = self.run_flake8(code, True)
+        result = self.run_flake8(code)
         assert result != []
 
     def test_fail_2(self):
         code = """
         from ..foo import bar
         """
-        result = self.run_flake8(code, True)
+        result = self.run_flake8(code)
         assert result != []

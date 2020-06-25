@@ -30,18 +30,16 @@ class BaseTest(abc.ABC):
     def _flake8dir(self, flake8dir):
         self.flake8dir = flake8dir
 
-    def run_flake8(
-        self, code: str, only_this_error: bool
-    ) -> List[ReportedMessage]:
+    def run_flake8(self, code: str) -> List[ReportedMessage]:
         self.flake8dir.make_example_py(textwrap.dedent(code))
-        result = self.flake8dir.run_flake8()
+        result = self.flake8dir.run_flake8(
+            extra_args=[f"--{self.error_code().lower()}_include=*"]
+        )
         reports = [
             ReportedMessage.from_raw(report) for report in result.out_lines
         ]
         return [
-            report
-            for report in reports
-            if report.code == self.error_code() or not only_this_error
+            report for report in reports if report.code == self.error_code()
         ]
 
     def assert_error_at(

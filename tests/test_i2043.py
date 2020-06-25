@@ -10,7 +10,7 @@ class Test_I2043(BaseTest):
         import os
         from os import path, environ
         """
-        result = self.run_flake8(code, True)
+        result = self.run_flake8(code)
         assert result == []
 
     def test_fail_1(self):
@@ -22,5 +22,5 @@ class Test_I2043(BaseTest):
 
         c = ImportChecker(ast.parse("from os import *"), "")
         list(c.run())
-        result = self.run_flake8(code, True)
+        result = self.run_flake8(code)
         assert result != []
