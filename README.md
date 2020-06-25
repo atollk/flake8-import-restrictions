@@ -12,7 +12,13 @@ and the `from` syntax (`from X.Y import Z [as foo]`). It talks about
 segments (`as Z`).
 
 ## Options
-TODO
+For every error `I20xx` listed below, there are options `--i20xx_include` and `--i20xx_exclude` 
+which are passed a comma separated list of UNIX wildcard patterns each. The error
+will then only be reported on imports of modules that match a include pattern but no exclude 
+pattern.
+
+By default, I2000, I2001, I2021, I2041, and I2043 include all (`*`) modules. Only I2041 excludes the
+`typing` module from checks, the other errors have no excludes by default.
 
 ## General Import Errors
 
