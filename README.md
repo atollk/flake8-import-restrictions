@@ -81,15 +81,6 @@ import os
 ### I2022
 The `import` syntax should not be used.
 
-```python
-# Bad
-import os.path
-
-# Good
-import os
-from os import path
-```
-
 
 ## `from` Syntax Errors
 
