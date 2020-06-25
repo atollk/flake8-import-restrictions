@@ -1,4 +1,9 @@
 # flake8-import-restrictions
+[![Build Status](https://github.com/atollk/flake8-import-restrictions/workflows/tox/badge.svg)](https://github.com/atollk/flake8-import-restrictions/actions)
+[![Build Status](https://github.com/atollk/flake8-import-restrictions/workflows/pylint/badge.svg)](https://github.com/atollk/flake8-import-restrictions/actions)
+[![Build Status](https://github.com/atollk/flake8-import-restrictions/workflows/black/badge.svg)](https://github.com/atollk/flake8-import-restrictions/actions)
+[![Build Status](https://github.com/atollk/flake8-import-restrictions/workflows/flake8/badge.svg)](https://github.com/atollk/flake8-import-restrictions/actions)
+
 A flake8 plugin used to disallow certain forms of imports.
 
 This plugin talks about the `import` syntax (`import X.Y.Z [as foo]`)
