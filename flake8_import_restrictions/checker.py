@@ -104,17 +104,17 @@ class ImportChecker:
 
 
 ERROR_MESSAGES = {
-    2000: "a",
-    2001: "a",
-    2020: "a",
-    2021: "a",
-    2022: "a",
-    2040: "a",
-    2041: "a",
-    2042: "a",
-    2043: "a",
-    2044: "a",
-    2045: "a",
+    2000: "Imports are only allowed on module level.",
+    2001: "Import aliases must be at least two characters long.",
+    2020: "Missing import alias for non-trivial import.",
+    2021: "Multiple imports in one import statement.",
+    2022: "import statements are forbidden.",
+    2040: "Multiple imports in one from-import statement.",
+    2041: "from-import statements must only import modules.",
+    2042: "from-import statements must not import modules.",
+    2043: "'import *' is forbidden.",
+    2044: "Relative imports are forbidden.",
+    2045: "from-import statements are forbidden.",
 }
 
 
