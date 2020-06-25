@@ -1,10 +1,12 @@
 import argparse
 import ast
-import importlib
 from collections import defaultdict
 from typing import Iterable, Tuple, Union, List, Dict
 
 import flake8.options.manager
+
+from flake8_import_restrictions.imports_submodule import imports_submodule
+
 
 class ImportChecker:
     """
@@ -17,6 +19,7 @@ class ImportChecker:
 
     def __init__(self, tree: ast.AST, filename: str):
         self.tree = tree
+        assert isinstance(filename, str)
         self.filename = filename
 
     @staticmethod
@@ -39,9 +42,14 @@ class ImportChecker:
         pass
 
     def run(self) -> Iterable[Tuple[int, int, str, type]]:
-        yield from _i2000(self.tree, ImportChecker.targetted_modules[2000])
-
         for node in ast.walk(self.tree):
+            if (
+                isinstance(node, ast.ClassDef)
+                or isinstance(node, ast.FunctionDef)
+                or isinstance(node, ast.AsyncFunctionDef)
+            ):
+                yield from _i2000(node, ImportChecker.targetted_modules[2000])
+
             if isinstance(node, ast.Import):
                 yield from _i2001(node, ImportChecker.targetted_modules[2001])
                 yield from _i2020(node, ImportChecker.targetted_modules[2020])
@@ -51,8 +59,12 @@ class ImportChecker:
             if isinstance(node, ast.ImportFrom):
                 yield from _i2001(node, ImportChecker.targetted_modules[2001])
                 yield from _i2040(node, ImportChecker.targetted_modules[2040])
-                yield from _i2041(node, self.filename, ImportChecker.targetted_modules[2041])
-                yield from _i2042(node, self.filename, ImportChecker.targetted_modules[2042])
+                yield from _i2041(
+                    node, self.filename, ImportChecker.targetted_modules[2041]
+                )
+                yield from _i2042(
+                    node, self.filename, ImportChecker.targetted_modules[2042]
+                )
                 yield from _i2043(node, ImportChecker.targetted_modules[2043])
                 yield from _i2044(node, ImportChecker.targetted_modules[2044])
                 yield from _i2045(node, ImportChecker.targetted_modules[2045])
@@ -82,30 +94,21 @@ def _error_tuple(error_code: int, node: ast.AST) -> Tuple[int, int, str, type]:
     )
 
 
-def _imports_submodule(filename: str, from_: str, impport_: str) -> bool:
-    """
-    Tests whether the statement "from from_ import import_" executed in the specified file
-    loads a module or a module element.
-    """
-    return False  # TODO
-
-
-def _i2000(tree: ast.AST, targetted_modules: List[str]) -> Iterable[Tuple[int, int, str, type]]:
+def _i2000(
+    node: Union[ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef],
+    targetted_modules: List[str],
+) -> Iterable[Tuple[int, int, str, type]]:
     """
     Imports should only happen on module level, not locally.
     """
-    if not isinstance(tree, ast.Module):
-        raise TypeError("Given AST is not a module.")
+    for ancestor in ast.walk(node):
+        if isinstance(ancestor, ast.Import) or isinstance(ancestor, ast.ImportFrom):
+            yield _error_tuple(2000, ancestor)
 
-    for top_level_object in tree.body:
-        if isinstance(top_level_object, ast.Import) or isinstance(top_level_object, ast.ImportFrom):
-            continue
 
-        for node in ast.walk(top_level_object):
-            if isinstance(node, ast.Import) or isinstance(node, ast.ImportFrom):
-                yield _error_tuple(2000, node)
-
-def _i2001(node: Union[ast.Import, ast.ImportFrom], targetted_modules: List[str]) -> Iterable[Tuple[int, int, str, type]]:
+def _i2001(
+    node: Union[ast.Import, ast.ImportFrom], targetted_modules: List[str]
+) -> Iterable[Tuple[int, int, str, type]]:
     """
     Alias identifiers defined from as segments should be at least two characters long.
     """
@@ -113,7 +116,10 @@ def _i2001(node: Union[ast.Import, ast.ImportFrom], targetted_modules: List[str]
         if name.asname and len(name.asname) == 1:
             yield _error_tuple(2001, node)
 
-def _i2020(node: ast.Import, targetted_modules: List[str]) -> Iterable[Tuple[int, int, str, type]]:
+
+def _i2020(
+    node: ast.Import, targetted_modules: List[str]
+) -> Iterable[Tuple[int, int, str, type]]:
     """
     When using the import syntax, if the imported module is a submodule, i.e. not a top level module, an "as" segment
     should be present.
@@ -123,20 +129,29 @@ def _i2020(node: ast.Import, targetted_modules: List[str]) -> Iterable[Tuple[int
             yield _error_tuple(2020, node)
             break
 
-def _i2021(node: ast.Import, targetted_modules: List[str]) -> Iterable[Tuple[int, int, str, type]]:
+
+def _i2021(
+    node: ast.Import, targetted_modules: List[str]
+) -> Iterable[Tuple[int, int, str, type]]:
     """
     When using the import syntax, each import statement should only import one module.
     """
     if len(node.names) > 1:
         yield _error_tuple(2021, node)
 
-def _i2022(node: ast.Import, targetted_modules: List[str]) -> Iterable[Tuple[int, int, str, type]]:
+
+def _i2022(
+    node: ast.Import, targetted_modules: List[str]
+) -> Iterable[Tuple[int, int, str, type]]:
     """
     The import syntax should not be used.
     """
     yield _error_tuple(2022, node)
 
-def _i2040(node: ast.ImportFrom, targetted_modules: List[str]) -> Iterable[Tuple[int, int, str, type]]:
+
+def _i2040(
+    node: ast.ImportFrom, targetted_modules: List[str]
+) -> Iterable[Tuple[int, int, str, type]]:
     """
     When using the from syntax, the import segment only contains one import.
     """
@@ -144,23 +159,31 @@ def _i2040(node: ast.ImportFrom, targetted_modules: List[str]) -> Iterable[Tuple
         yield _error_tuple(2040, node)
 
 
-def _i2041(node: ast.ImportFrom, filename: str, targetted_modules: List[str]) -> Iterable[Tuple[int, int, str, type]]:
+def _i2041(
+    node: ast.ImportFrom, filename: str, targetted_modules: List[str]
+) -> Iterable[Tuple[int, int, str, type]]:
     """
     When using the from syntax, only submodules are imported, not module elements.
     """
     for name in node.names:
-        if not _imports_submodule(filename, "."*node.level + node.module, name.name):
+        if not imports_submodule(filename, node.level, node.module, name.name):
             yield _error_tuple(2041, node)
 
-def _i2042(node: ast.ImportFrom, filename: str, targetted_modules: List[str]) -> Iterable[Tuple[int, int, str, type]]:
+
+def _i2042(
+    node: ast.ImportFrom, filename: str, targetted_modules: List[str]
+) -> Iterable[Tuple[int, int, str, type]]:
     """
     When using the from syntax, only module elements are imported, not submodules.
     """
     for name in node.names:
-        if _imports_submodule(filename, "."*node.level + node.module, name.name):
-            yield _error_tuple(2041, node)
+        if imports_submodule(filename, node.level, node.module, name.name):
+            yield _error_tuple(2042, node)
 
-def _i2043(node: ast.ImportFrom, targetted_modules: List[str]) -> Iterable[Tuple[int, int, str, type]]:
+
+def _i2043(
+    node: ast.ImportFrom, targetted_modules: List[str]
+) -> Iterable[Tuple[int, int, str, type]]:
     """
     When using the from syntax, import * should not be used.
     """
@@ -169,14 +192,20 @@ def _i2043(node: ast.ImportFrom, targetted_modules: List[str]) -> Iterable[Tuple
             yield _error_tuple(2043, node)
             break
 
-def _i2044(node: ast.ImportFrom, targetted_modules: List[str]) -> Iterable[Tuple[int, int, str, type]]:
+
+def _i2044(
+    node: ast.ImportFrom, targetted_modules: List[str]
+) -> Iterable[Tuple[int, int, str, type]]:
     """
     Relative imports should not be used.
     """
     if node.level != 0:
         yield _error_tuple(2044, node)
 
-def _i2045(node: ast.ImportFrom, targetted_modules: List[str]) -> Iterable[Tuple[int, int, str, type]]:
+
+def _i2045(
+    node: ast.ImportFrom, targetted_modules: List[str]
+) -> Iterable[Tuple[int, int, str, type]]:
     """
     The from syntax should not be used.
     """

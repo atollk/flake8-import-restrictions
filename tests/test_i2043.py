@@ -1,4 +1,3 @@
-
 from tests.util import BaseTest
 
 
@@ -18,6 +17,10 @@ class Test_I2043(BaseTest):
         code = """
         from os import *
         """
+        from flake8_import_restrictions.checker import ImportChecker
+        import ast
+
+        c = ImportChecker(ast.parse("from os import *"), "")
+        list(c.run())
         result = self.run_flake8(code, True)
         assert result != []
-

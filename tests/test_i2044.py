@@ -1,4 +1,6 @@
+import ast
 
+from flake8_import_restrictions.checker import ImportChecker
 from tests.util import BaseTest
 
 

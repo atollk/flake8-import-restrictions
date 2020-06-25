@@ -1,4 +1,3 @@
-
 from tests.util import BaseTest
 
 

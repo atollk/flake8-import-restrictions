@@ -1,3 +1,4 @@
+import ast
 
 from tests.util import BaseTest
 
@@ -27,7 +28,6 @@ class Test_I2041(BaseTest):
         """
         result = self.run_flake8(code, True)
         assert result != []
-
 
     def test_fail_2(self):
         code = """
