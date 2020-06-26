@@ -200,7 +200,7 @@ def _i2002(
     Alias identifiers should not have the same name as the imported object.
     """
     for name in node.names:
-        if name.name == node.asname:
+        if name.name == name.asname:
             yield _error_tuple(2002, node)
 
 
