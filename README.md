@@ -49,17 +49,6 @@ import os.path as p
 import os.path as path
 ```
 
-### I2002
-Alias identifiers should not have the same name as the imported object.
-
-```python
-# Bad
-import sys as sys
-
-# Good
-import sys
-```
-
 ## `import` Syntax Errors
 
 ### I2020
