@@ -8,10 +8,24 @@ import flake8.options.manager
 
 from flake8_import_restrictions.imports_submodule import imports_submodule
 
-ALL_ERRORS = {2000, 2001, 2020, 2021, 2022, 2040, 2041, 2042, 2043, 2044, 2045}
+ALL_ERRORS = {
+    2000,
+    2001,
+    2002,
+    2020,
+    2021,
+    2022,
+    2040,
+    2041,
+    2042,
+    2043,
+    2044,
+    2045,
+}
 DEFAULT_INCLUDE = {
     2000: ["*"],
     2001: ["*"],
+    2002: ["*"],
     2021: ["*"],
     2041: ["*"],
     2043: ["*"],
@@ -79,6 +93,8 @@ class ImportChecker:
             if isinstance(node, ast.Import):
                 if _applies_to(node, ImportChecker.targetted_modules[2001]):
                     yield from _i2001(node)
+                if _applies_to(node, ImportChecker.targetted_modules[2002]):
+                    yield from _i2002(node)
                 if _applies_to(node, ImportChecker.targetted_modules[2020]):
                     yield from _i2020(node)
                 if _applies_to(node, ImportChecker.targetted_modules[2021]):
@@ -89,6 +105,8 @@ class ImportChecker:
             if isinstance(node, ast.ImportFrom):
                 if _applies_to(node, ImportChecker.targetted_modules[2001]):
                     yield from _i2001(node)
+                if _applies_to(node, ImportChecker.targetted_modules[2002]):
+                    yield from _i2002(node)
                 if _applies_to(node, ImportChecker.targetted_modules[2040]):
                     yield from _i2040(node)
                 if _applies_to(node, ImportChecker.targetted_modules[2041]):
@@ -106,6 +124,7 @@ class ImportChecker:
 ERROR_MESSAGES = {
     2000: "Imports are only allowed on module level.",
     2001: "Import aliases must be at least two characters long.",
+    2002: "Import alias has no effect.",
     2020: "Missing import alias for non-trivial import.",
     2021: "Multiple imports in one import statement.",
     2022: "import statements are forbidden.",
@@ -172,6 +191,17 @@ def _i2001(
     for name in node.names:
         if name.asname and len(name.asname) == 1:
             yield _error_tuple(2001, node)
+
+
+def _i2002(
+    node: Union[ast.Import, ast.ImportFrom]
+) -> Iterable[Tuple[int, int, str, type]]:
+    """
+    Alias identifiers should not have the same name as the imported object.
+    """
+    for name in node.names:
+        if name.name == name.asname:
+            yield _error_tuple(2002, node)
 
 
 def _i2020(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
