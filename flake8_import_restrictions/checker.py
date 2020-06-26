@@ -8,7 +8,20 @@ import flake8.options.manager
 
 from flake8_import_restrictions.imports_submodule import imports_submodule
 
-ALL_ERRORS = {2000, 2001, 2002, 2020, 2021, 2022, 2040, 2041, 2042, 2043, 2044, 2045}
+ALL_ERRORS = {
+    2000,
+    2001,
+    2002,
+    2020,
+    2021,
+    2022,
+    2040,
+    2041,
+    2042,
+    2043,
+    2044,
+    2045,
+}
 DEFAULT_INCLUDE = {
     2000: ["*"],
     2001: ["*"],
@@ -186,6 +199,9 @@ def _i2002(
     """
     Alias identifiers should not have the same name as the imported object.
     """
+    for name in node.names:
+        if name.name == node.asname:
+            yield _error_tuple(2002, node)
 
 
 def _i2020(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
