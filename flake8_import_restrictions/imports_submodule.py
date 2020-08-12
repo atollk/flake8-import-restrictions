@@ -1,7 +1,7 @@
 import importlib
+import os.path
 import sys
 import types
-import os.path
 from typing import Optional
 
 

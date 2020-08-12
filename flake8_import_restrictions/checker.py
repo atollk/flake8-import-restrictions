@@ -2,7 +2,8 @@ import argparse
 import ast
 import fnmatch
 from collections import defaultdict
-from typing import Iterable, Tuple, Union, List, Dict
+from importlib import metadata
+from typing import Dict, Iterable, List, Tuple, Union
 
 import flake8.options.manager
 
@@ -39,7 +40,7 @@ class ImportChecker:
     """
 
     name = "flake8-import-restrictions"
-    version = "1.1.0"
+    version = metadata.version(name)
     targetted_modules: Dict[int, Tuple[List[str], List[str]]] = defaultdict(
         lambda: ([], [])
     )
