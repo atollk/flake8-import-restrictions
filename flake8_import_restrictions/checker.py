@@ -2,7 +2,10 @@ import argparse
 import ast
 import fnmatch
 from collections import defaultdict
-from importlib import metadata
+try:
+    from importlib import metadata
+except ImportError:
+    import importlib_metadata as metadata
 from typing import Dict, Iterable, List, Tuple, Union
 
 import flake8.options.manager
