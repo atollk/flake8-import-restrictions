@@ -24,4 +24,4 @@ class Test_I2020(BaseTest):
         import os.path
         """
         result = self.run_flake8(code)
-        assert result != []
+        self.assert_error_at(result, "I2020", 1, 1)
