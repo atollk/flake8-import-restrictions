@@ -31,11 +31,11 @@ class Test_I2001(BaseTest):
         import os as o
         """
         result = self.run_flake8(code)
-        assert result != []
+        self.assert_error_at(result, "I2001", 1, 1)
 
     def test_fail_2(self):
         code = """
         from os import path as p
         """
         result = self.run_flake8(code)
-        assert result != []
+        self.assert_error_at(result, "I2001", 1, 1)

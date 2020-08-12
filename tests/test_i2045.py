@@ -17,4 +17,4 @@ class Test_I2045(BaseTest):
         from os import path
         """
         result = self.run_flake8(code)
-        assert result != []
+        self.assert_error_at(result, "I2045", 1, 1)

@@ -26,11 +26,11 @@ class Test_I2002(BaseTest):
         import os as os
         """
         result = self.run_flake8(code)
-        assert result != []
+        self.assert_error_at(result, "I2002", 1, 1)
 
     def test_fail_2(self):
         code = """
         from os import environ as env, path as path
         """
         result = self.run_flake8(code)
-        assert result != []
+        self.assert_error_at(result, "I2002", 1, 1)

@@ -26,11 +26,11 @@ class Test_I2021(BaseTest):
         import os, sys
         """
         result = self.run_flake8(code)
-        assert result != []
+        self.assert_error_at(result, "I2021", 1, 1)
 
     def test_fail_2(self):
         code = """
         import curses.ascii, curses.panel
         """
         result = self.run_flake8(code)
-        assert result != []
+        self.assert_error_at(result, "I2021", 1, 1)

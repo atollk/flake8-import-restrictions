@@ -38,7 +38,7 @@ class Test_I2000(BaseTest):
             import os
         """
         result = self.run_flake8(code)
-        assert result != []
+        self.assert_error_at(result, "I2000", 2, 5)
 
     def test_fail_2(self):
         code = """
@@ -46,4 +46,4 @@ class Test_I2000(BaseTest):
             import os
         """
         result = self.run_flake8(code)
-        assert result != []
+        self.assert_error_at(result, "I2000", 2, 5)

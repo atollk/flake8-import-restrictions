@@ -17,11 +17,11 @@ class Test_I2022(BaseTest):
         import os.path as path
         """
         result = self.run_flake8(code)
-        assert result != []
+        self.assert_error_at(result, "I2022", 1, 1)
 
     def test_fail_2(self):
         code = """
         import os
         """
         result = self.run_flake8(code)
-        assert result != []
+        self.assert_error_at(result, "I2022", 1, 1)

@@ -18,11 +18,11 @@ class Test_I2044(BaseTest):
         from .foo import bar
         """
         result = self.run_flake8(code)
-        assert result != []
+        self.assert_error_at(result, "I2044", 1, 1)
 
     def test_fail_2(self):
         code = """
         from ..foo import bar
         """
         result = self.run_flake8(code)
-        assert result != []
+        self.assert_error_at(result, "I2044", 1, 1)
