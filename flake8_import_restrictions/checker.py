@@ -39,7 +39,7 @@ class ImportChecker:
     """
 
     name = "flake8-import-restrictions"
-    version = "1.0"
+    version = "1.1.0"
     targetted_modules: Dict[int, Tuple[List[str], List[str]]] = defaultdict(
         lambda: ([], [])
     )
