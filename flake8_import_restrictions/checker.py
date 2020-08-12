@@ -2,6 +2,7 @@ import argparse
 import ast
 import fnmatch
 from collections import defaultdict
+
 try:
     from importlib import metadata
 except ImportError:
