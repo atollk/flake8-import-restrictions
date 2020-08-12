@@ -156,6 +156,8 @@ def _applies_to(
         modules = [node.module]
 
     for module in modules:
+        if not module:  # "from ." causes module to be None
+            module = ""
         includes = any(
             fnmatch.fnmatch(module, target) for target in incexclude[0]
         )
