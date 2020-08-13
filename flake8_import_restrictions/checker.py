@@ -146,12 +146,28 @@ ERROR_MESSAGES = {
     2045: "from-import statements are forbidden.",
 }
 
+ERROR_HINTS = {
+    2000: "Move this import to the top of the file.",
+    2001: 'Choose a longer alias after the "as" keyword.',
+    2002: 'Remove the "as" keyword and following alias.',
+    2020: 'Use "as" keyword and provide a shorter alias.',
+    2021: "Split onto multiple lines.",
+    2022: 'Use "from" syntax instead.',
+    2023: 'Use "from" syntax instead or choose a different alias.',
+    2040: "Split onto multiple lines.",
+    2041: "Import the containing module instead.",
+    2042: "Import functions/classes directly instead.",
+    2043: "Import individual elements instead.",
+    2044: "Change the imported module to an absolute path.",
+    2045: 'Use the "import" syntax instead.',
+}
+
 
 def _error_tuple(error_code: int, node: ast.AST) -> Tuple[int, int, str, type]:
     return (
         node.lineno,
         node.col_offset,
-        f"I{error_code} {ERROR_MESSAGES[error_code]}",
+        f"I{error_code} {ERROR_MESSAGES[error_code]} (hint: {ERROR_HINTS[error_code]})",
         ImportChecker,
     )
 
