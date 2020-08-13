@@ -20,6 +20,7 @@ ALL_ERRORS = {
     2020,
     2021,
     2022,
+    2023,
     2040,
     2041,
     2042,
@@ -32,6 +33,7 @@ DEFAULT_INCLUDE = {
     2001: ["*"],
     2002: ["*"],
     2021: ["*"],
+    2023: ["*"],
     2041: ["*"],
     2043: ["*"],
 }
@@ -106,6 +108,8 @@ class ImportChecker:
                     yield from _i2021(node)
                 if _applies_to(node, ImportChecker.targetted_modules[2022]):
                     yield from _i2022(node)
+                if _applies_to(node, ImportChecker.targetted_modules[2023]):
+                    yield from _i2023(node)
 
             if isinstance(node, ast.ImportFrom):
                 if _applies_to(node, ImportChecker.targetted_modules[2001]):
@@ -133,6 +137,7 @@ ERROR_MESSAGES = {
     2020: "Missing import alias for non-trivial import.",
     2021: "Multiple imports in one import statement.",
     2022: "import statements are forbidden.",
+    2023: "import statements with alias must not contain duplicate module names.",
     2040: "Multiple imports in one from-import statement.",
     2041: "from-import statements must only import modules.",
     2042: "from-import statements must not import modules.",
@@ -141,12 +146,28 @@ ERROR_MESSAGES = {
     2045: "from-import statements are forbidden.",
 }
 
+ERROR_HINTS = {
+    2000: "Move this import to the top of the file.",
+    2001: 'Choose a longer alias after the "as" keyword.',
+    2002: 'Remove the "as" keyword and following alias.',
+    2020: 'Use "as" keyword and provide a shorter alias.',
+    2021: "Split onto multiple lines.",
+    2022: 'Use "from" syntax instead.',
+    2023: 'Use "from" syntax instead or choose a different alias.',
+    2040: "Split onto multiple lines.",
+    2041: "Import the containing module instead.",
+    2042: "Import functions/classes directly instead.",
+    2043: "Import individual elements instead.",
+    2044: "Change the imported module to an absolute path.",
+    2045: 'Use the "import" syntax instead.',
+}
+
 
 def _error_tuple(error_code: int, node: ast.AST) -> Tuple[int, int, str, type]:
     return (
         node.lineno,
         node.col_offset,
-        f"I{error_code} {ERROR_MESSAGES[error_code]}",
+        f"I{error_code} {ERROR_MESSAGES[error_code]} (hint: {ERROR_HINTS[error_code]})",
         ImportChecker,
     )
 
@@ -213,8 +234,7 @@ def _i2002(
 
 def _i2020(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
     """
-    When using the import syntax, if the imported module is a submodule, i.e. not a top level module, an "as" segment
-    should be present.
+    When using the import syntax, if the imported module is a submodule, i.e. not a top level module, an "as" segment should be present.
     """
     for name in node.names:
         if "." in name.name and not name.asname:
@@ -235,6 +255,15 @@ def _i2022(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
     The import syntax should not be used.
     """
     yield _error_tuple(2022, node)
+
+
+def _i2023(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
+    """
+    When using the `import` syntax, do not duplicate module names in the `as` segment.
+    """
+    for name in node.names:
+        if name.name.split(".")[-1] == name.asname:
+            yield _error_tuple(2023, node)
 
 
 def _i2040(node: ast.ImportFrom) -> Iterable[Tuple[int, int, str, type]]:
