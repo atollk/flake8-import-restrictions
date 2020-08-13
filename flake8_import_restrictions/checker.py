@@ -20,6 +20,7 @@ ALL_ERRORS = {
     2020,
     2021,
     2022,
+    2023,
     2040,
     2041,
     2042,
@@ -32,6 +33,7 @@ DEFAULT_INCLUDE = {
     2001: ["*"],
     2002: ["*"],
     2021: ["*"],
+    2023: ["*"],
     2041: ["*"],
     2043: ["*"],
 }
@@ -106,6 +108,8 @@ class ImportChecker:
                     yield from _i2021(node)
                 if _applies_to(node, ImportChecker.targetted_modules[2022]):
                     yield from _i2022(node)
+                if _applies_to(node, ImportChecker.targetted_modules[2023]):
+                    yield from _i2023(node)
 
             if isinstance(node, ast.ImportFrom):
                 if _applies_to(node, ImportChecker.targetted_modules[2001]):
@@ -133,6 +137,7 @@ ERROR_MESSAGES = {
     2020: "Missing import alias for non-trivial import.",
     2021: "Multiple imports in one import statement.",
     2022: "import statements are forbidden.",
+    2023: "import statements with alias must not contain duplicate module names.",
     2040: "Multiple imports in one from-import statement.",
     2041: "from-import statements must only import modules.",
     2042: "from-import statements must not import modules.",
@@ -213,8 +218,7 @@ def _i2002(
 
 def _i2020(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
     """
-    When using the import syntax, if the imported module is a submodule, i.e. not a top level module, an "as" segment
-    should be present.
+    When using the import syntax, if the imported module is a submodule, i.e. not a top level module, an "as" segment should be present.
     """
     for name in node.names:
         if "." in name.name and not name.asname:
@@ -235,6 +239,15 @@ def _i2022(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
     The import syntax should not be used.
     """
     yield _error_tuple(2022, node)
+
+
+def _i2023(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
+    """
+    When using the `import` syntax, do not duplicate module names in the `as` segment.
+    """
+    for name in node.names:
+        if name.name.split(".")[-1] == name.asname:
+            yield _error_tuple(2023, node)
 
 
 def _i2040(node: ast.ImportFrom) -> Iterable[Tuple[int, int, str, type]]:

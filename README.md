@@ -92,6 +92,20 @@ import os
 The `import` syntax should not be used.
 
 
+### I2023
+When using the `import` syntax, do not duplicate module names in the `as`
+segment.
+
+```python
+# Bad
+import os.path as path
+
+# Good
+from os import path
+import os.path as ospath
+```
+
+
 ## `from` Syntax Errors
 
 ### I2040
