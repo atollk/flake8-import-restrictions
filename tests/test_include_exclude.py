@@ -16,14 +16,14 @@ class Test_IncludeExclude:
         self.flake8dir.make_example_py(code)
         result = self.flake8dir.run_flake8(
             [
-                f"--i2022_include={','.join(include)}",
-                f"--i2022_exclude={','.join(exclude)}",
+                f"--imr222_include={','.join(include)}",
+                f"--imr222_exclude={','.join(exclude)}",
             ]
         )
         reports = [
             ReportedMessage.from_raw(report) for report in result.out_lines
         ]
-        return [report for report in reports if report.code == "I2022"]
+        return [report for report in reports if report.code == "IMR222"]
 
     def test_1(self):
         code = "import os"

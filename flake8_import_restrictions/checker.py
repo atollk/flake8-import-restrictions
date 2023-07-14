@@ -95,39 +95,39 @@ class ImportChecker:
                 or isinstance(node, ast.FunctionDef)
                 or isinstance(node, ast.AsyncFunctionDef)
             ):
-                yield from _i2000(node, ImportChecker.targetted_modules[2000])
+                yield from _imr200(node, ImportChecker.targetted_modules[2000])
 
             if isinstance(node, ast.Import):
                 if _applies_to(node, ImportChecker.targetted_modules[2001]):
-                    yield from _i2001(node)
+                    yield from _imr201(node)
                 if _applies_to(node, ImportChecker.targetted_modules[2002]):
-                    yield from _i2002(node)
+                    yield from _imr202(node)
                 if _applies_to(node, ImportChecker.targetted_modules[2020]):
-                    yield from _i2020(node)
+                    yield from _imr220(node)
                 if _applies_to(node, ImportChecker.targetted_modules[2021]):
-                    yield from _i2021(node)
+                    yield from _imr221(node)
                 if _applies_to(node, ImportChecker.targetted_modules[2022]):
-                    yield from _i2022(node)
+                    yield from _imr222(node)
                 if _applies_to(node, ImportChecker.targetted_modules[2023]):
-                    yield from _i2023(node)
+                    yield from _imr223(node)
 
             if isinstance(node, ast.ImportFrom):
                 if _applies_to(node, ImportChecker.targetted_modules[2001]):
-                    yield from _i2001(node)
+                    yield from _imr201(node)
                 if _applies_to(node, ImportChecker.targetted_modules[2002]):
-                    yield from _i2002(node)
+                    yield from _imr202(node)
                 if _applies_to(node, ImportChecker.targetted_modules[2040]):
-                    yield from _i2040(node)
+                    yield from _imr240(node)
                 if _applies_to(node, ImportChecker.targetted_modules[2041]):
-                    yield from _i2041(node, self.filename)
+                    yield from _imr241(node, self.filename)
                 if _applies_to(node, ImportChecker.targetted_modules[2042]):
-                    yield from _i2042(node, self.filename)
+                    yield from _imr242(node, self.filename)
                 if _applies_to(node, ImportChecker.targetted_modules[2043]):
-                    yield from _i2043(node)
+                    yield from _imr243(node)
                 if _applies_to(node, ImportChecker.targetted_modules[2044]):
-                    yield from _i2044(node)
+                    yield from _imr244(node)
                 if _applies_to(node, ImportChecker.targetted_modules[2045]):
-                    yield from _i2045(node)
+                    yield from _imr245(node)
 
 
 ERROR_MESSAGES = {
@@ -195,7 +195,7 @@ def _applies_to(
     return False
 
 
-def _i2000(
+def _imr200(
     node: Union[ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef],
     incexclude: Tuple[List[str], List[str]],
 ) -> Iterable[Tuple[int, int, str, type]]:
@@ -210,7 +210,7 @@ def _i2000(
                 yield _error_tuple(2000, ancestor)
 
 
-def _i2001(
+def _imr201(
     node: Union[ast.Import, ast.ImportFrom]
 ) -> Iterable[Tuple[int, int, str, type]]:
     """
@@ -221,7 +221,7 @@ def _i2001(
             yield _error_tuple(2001, node)
 
 
-def _i2002(
+def _imr202(
     node: Union[ast.Import, ast.ImportFrom]
 ) -> Iterable[Tuple[int, int, str, type]]:
     """
@@ -232,7 +232,7 @@ def _i2002(
             yield _error_tuple(2002, node)
 
 
-def _i2020(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
+def _imr220(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
     """
     When using the import syntax, if the imported module is a submodule, i.e. not a top level module, an "as" segment should be present.
     """
@@ -242,7 +242,7 @@ def _i2020(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
             break
 
 
-def _i2021(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
+def _imr221(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
     """
     When using the import syntax, each import statement should only import one module.
     """
@@ -250,14 +250,14 @@ def _i2021(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
         yield _error_tuple(2021, node)
 
 
-def _i2022(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
+def _imr222(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
     """
     The import syntax should not be used.
     """
     yield _error_tuple(2022, node)
 
 
-def _i2023(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
+def _imr223(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
     """
     When using the `import` syntax, do not duplicate module names in the `as` segment.
     """
@@ -266,7 +266,7 @@ def _i2023(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
             yield _error_tuple(2023, node)
 
 
-def _i2040(node: ast.ImportFrom) -> Iterable[Tuple[int, int, str, type]]:
+def _imr240(node: ast.ImportFrom) -> Iterable[Tuple[int, int, str, type]]:
     """
     When using the from syntax, the import segment only contains one import.
     """
@@ -274,7 +274,7 @@ def _i2040(node: ast.ImportFrom) -> Iterable[Tuple[int, int, str, type]]:
         yield _error_tuple(2040, node)
 
 
-def _i2041(
+def _imr241(
     node: ast.ImportFrom, filename: str
 ) -> Iterable[Tuple[int, int, str, type]]:
     """
@@ -285,7 +285,7 @@ def _i2041(
             yield _error_tuple(2041, node)
 
 
-def _i2042(
+def _imr242(
     node: ast.ImportFrom, filename: str
 ) -> Iterable[Tuple[int, int, str, type]]:
     """
@@ -296,7 +296,7 @@ def _i2042(
             yield _error_tuple(2042, node)
 
 
-def _i2043(node: ast.ImportFrom) -> Iterable[Tuple[int, int, str, type]]:
+def _imr243(node: ast.ImportFrom) -> Iterable[Tuple[int, int, str, type]]:
     """
     When using the from syntax, import * should not be used.
     """
@@ -306,7 +306,7 @@ def _i2043(node: ast.ImportFrom) -> Iterable[Tuple[int, int, str, type]]:
             break
 
 
-def _i2044(node: ast.ImportFrom) -> Iterable[Tuple[int, int, str, type]]:
+def _imr244(node: ast.ImportFrom) -> Iterable[Tuple[int, int, str, type]]:
     """
     Relative imports should not be used.
     """
@@ -314,7 +314,7 @@ def _i2044(node: ast.ImportFrom) -> Iterable[Tuple[int, int, str, type]]:
         yield _error_tuple(2044, node)
 
 
-def _i2045(node: ast.ImportFrom) -> Iterable[Tuple[int, int, str, type]]:
+def _imr245(node: ast.ImportFrom) -> Iterable[Tuple[int, int, str, type]]:
     """
     The from syntax should not be used.
     """
