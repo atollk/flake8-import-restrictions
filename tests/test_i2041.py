@@ -25,11 +25,11 @@ class Test_IMR241(BaseTest):
         from os.path import join
         """
         result = self.run_flake8(code)
-        self.assert_error_at(result, "IMR241", 1, 1)
+        self.assert_error_at(result, "IMR241", 2, 1)
 
     def test_fail_2(self):
         code = """
         from os import path, environ
         """
         result = self.run_flake8(code)
-        self.assert_error_at(result, "IMR241", 1, 1)
+        self.assert_error_at(result, "IMR241", 2, 1)

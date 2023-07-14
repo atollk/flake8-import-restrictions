@@ -18,4 +18,4 @@ class Test_IMR243(BaseTest):
         from os import *
         """
         result = self.run_flake8(code)
-        self.assert_error_at(result, "IMR243", 1, 1)
+        self.assert_error_at(result, "IMR243", 2, 1)

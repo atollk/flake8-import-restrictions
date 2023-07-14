@@ -18,18 +18,18 @@ class Test_IMR244(BaseTest):
         from .foo import bar
         """
         result = self.run_flake8(code)
-        self.assert_error_at(result, "IMR244", 1, 1)
+        self.assert_error_at(result, "IMR244", 2, 1)
 
     def test_fail_2(self):
         code = """
         from ..foo import bar
         """
         result = self.run_flake8(code)
-        self.assert_error_at(result, "IMR244", 1, 1)
+        self.assert_error_at(result, "IMR244", 2, 1)
 
     def test_fail_3(self):
         code = """
         from . import foo
         """
         result = self.run_flake8(code)
-        self.assert_error_at(result, "IMR244", 1, 1)
+        self.assert_error_at(result, "IMR244", 2, 1)

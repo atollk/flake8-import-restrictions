@@ -31,11 +31,11 @@ class Test_IMR201(BaseTest):
         import os as o
         """
         result = self.run_flake8(code)
-        self.assert_error_at(result, "IMR201", 1, 1)
+        self.assert_error_at(result, "IMR201", 2, 1)
 
     def test_fail_2(self):
         code = """
         from os import path as p
         """
         result = self.run_flake8(code)
-        self.assert_error_at(result, "IMR201", 1, 1)
+        self.assert_error_at(result, "IMR201", 2, 1)

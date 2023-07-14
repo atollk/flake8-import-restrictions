@@ -17,4 +17,4 @@ class Test_IMR245(BaseTest):
         from os import path
         """
         result = self.run_flake8(code)
-        self.assert_error_at(result, "IMR245", 1, 1)
+        self.assert_error_at(result, "IMR245", 2, 1)

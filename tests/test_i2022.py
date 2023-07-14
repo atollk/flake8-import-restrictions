@@ -17,11 +17,11 @@ class Test_IMR222(BaseTest):
         import os.path as path
         """
         result = self.run_flake8(code)
-        self.assert_error_at(result, "IMR222", 1, 1)
+        self.assert_error_at(result, "IMR222", 2, 1)
 
     def test_fail_2(self):
         code = """
         import os
         """
         result = self.run_flake8(code)
-        self.assert_error_at(result, "IMR222", 1, 1)
+        self.assert_error_at(result, "IMR222", 2, 1)

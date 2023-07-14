@@ -24,4 +24,4 @@ class Test_IMR223(BaseTest):
         import os.path as path
         """
         result = self.run_flake8(code)
-        self.assert_error_at(result, "IMR223", 1, 1)
+        self.assert_error_at(result, "IMR223", 2, 1)

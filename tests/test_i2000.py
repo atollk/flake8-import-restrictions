@@ -38,7 +38,7 @@ class Test_IMR200(BaseTest):
             import os
         """
         result = self.run_flake8(code)
-        self.assert_error_at(result, "IMR200", 2, 5)
+        self.assert_error_at(result, "IMR200", 3, 5)
 
     def test_fail_2(self):
         code = """
@@ -46,4 +46,4 @@ class Test_IMR200(BaseTest):
             import os
         """
         result = self.run_flake8(code)
-        self.assert_error_at(result, "IMR200", 2, 5)
+        self.assert_error_at(result, "IMR200", 3, 5)

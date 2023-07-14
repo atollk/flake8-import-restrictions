@@ -26,11 +26,11 @@ class Test_IMR240(BaseTest):
         from os import path, environ
         """
         result = self.run_flake8(code)
-        self.assert_error_at(result, "IMR240", 1, 1)
+        self.assert_error_at(result, "IMR240", 2, 1)
 
     def test_fail_2(self):
         code = """
         from curses import ascii, panel
         """
         result = self.run_flake8(code)
-        self.assert_error_at(result, "IMR240", 1, 1)
+        self.assert_error_at(result, "IMR240", 2, 1)

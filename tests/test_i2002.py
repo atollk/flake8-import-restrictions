@@ -26,11 +26,11 @@ class Test_IMR202(BaseTest):
         import os as os
         """
         result = self.run_flake8(code)
-        self.assert_error_at(result, "IMR202", 1, 1)
+        self.assert_error_at(result, "IMR202", 2, 1)
 
     def test_fail_2(self):
         code = """
         from os import environ as env, path as path
         """
         result = self.run_flake8(code)
-        self.assert_error_at(result, "IMR202", 1, 1)
+        self.assert_error_at(result, "IMR202", 2, 1)
