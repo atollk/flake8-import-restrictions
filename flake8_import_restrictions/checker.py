@@ -37,7 +37,7 @@ DEFAULT_INCLUDE = {
     241: ["*"],
     243: ["*"],
 }
-DEFAULT_EXCLUDE = {2041: ["typing"]}
+DEFAULT_EXCLUDE = {241: ["typing"]}
 
 
 class ImportChecker:
@@ -60,20 +60,20 @@ class ImportChecker:
     def add_options(option_manager: flake8.options.manager.OptionManager):
         for error in ALL_ERRORS:
             option_manager.add_option(
-                f"--i{error}_include",
+                f"--imr{error}_include",
                 type=str,
                 comma_separated_list=True,
                 default=DEFAULT_INCLUDE.get(error, []),
                 parse_from_config=True,
-                help=f"List of modules that I{error} is applied to. Allows UNIX wildcards.",
+                help=f"List of modules that IMR{error} is applied to. Allows UNIX wildcards.",
             )
             option_manager.add_option(
-                f"--i{error}_exclude",
+                f"--imr{error}_exclude",
                 type=str,
                 comma_separated_list=True,
                 default=DEFAULT_EXCLUDE.get(error, []),
                 parse_from_config=True,
-                help=f"List of modules that I{error} is *not* applied to. Overwrites the _include flag. Allows UNIX wildcards.",
+                help=f"List of modules that IMR{error} is *not* applied to. Overwrites the _include flag. Allows UNIX wildcards.",
             )
 
     @staticmethod
@@ -84,8 +84,8 @@ class ImportChecker:
     ):
         for error in ALL_ERRORS:
             ImportChecker.targetted_modules[error] = (
-                getattr(options, f"i{error}_include"),
-                getattr(options, f"i{error}_exclude"),
+                getattr(options, f"imr{error}_include"),
+                getattr(options, f"imr{error}_exclude"),
             )
 
     def run(self) -> Iterable[Tuple[int, int, str, type]]:
@@ -167,7 +167,7 @@ def _error_tuple(error_code: int, node: ast.AST) -> Tuple[int, int, str, type]:
     return (
         node.lineno,
         node.col_offset,
-        f"I{error_code} {ERROR_MESSAGES[error_code]} (hint: {ERROR_HINTS[error_code]})",
+        f"IMR{error_code} {ERROR_MESSAGES[error_code]} (hint: {ERROR_HINTS[error_code]})",
         ImportChecker,
     )
 
@@ -207,7 +207,7 @@ def _imr200(
             ancestor, ast.ImportFrom
         ):
             if _applies_to(ancestor, incexclude):
-                yield _error_tuple(2000, ancestor)
+                yield _error_tuple(200, ancestor)
 
 
 def _imr201(
@@ -218,7 +218,7 @@ def _imr201(
     """
     for name in node.names:
         if name.asname and len(name.asname) == 1:
-            yield _error_tuple(2001, node)
+            yield _error_tuple(201, node)
 
 
 def _imr202(
@@ -229,7 +229,7 @@ def _imr202(
     """
     for name in node.names:
         if name.name == name.asname:
-            yield _error_tuple(2002, node)
+            yield _error_tuple(202, node)
 
 
 def _imr220(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
@@ -238,7 +238,7 @@ def _imr220(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
     """
     for name in node.names:
         if "." in name.name and not name.asname:
-            yield _error_tuple(2020, node)
+            yield _error_tuple(220, node)
             break
 
 
@@ -247,14 +247,14 @@ def _imr221(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
     When using the import syntax, each import statement should only import one module.
     """
     if len(node.names) > 1:
-        yield _error_tuple(2021, node)
+        yield _error_tuple(221, node)
 
 
 def _imr222(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
     """
     The import syntax should not be used.
     """
-    yield _error_tuple(2022, node)
+    yield _error_tuple(222, node)
 
 
 def _imr223(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
@@ -263,7 +263,7 @@ def _imr223(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
     """
     for name in node.names:
         if name.name.split(".")[-1] == name.asname:
-            yield _error_tuple(2023, node)
+            yield _error_tuple(223, node)
 
 
 def _imr240(node: ast.ImportFrom) -> Iterable[Tuple[int, int, str, type]]:
@@ -271,7 +271,7 @@ def _imr240(node: ast.ImportFrom) -> Iterable[Tuple[int, int, str, type]]:
     When using the "from" syntax, the import segment only contains one import.
     """
     if len(node.names) > 1:
-        yield _error_tuple(2040, node)
+        yield _error_tuple(240, node)
 
 
 def _imr241(
@@ -281,8 +281,10 @@ def _imr241(
     When using the "from" syntax, only submodules are imported, not module elements.
     """
     for name in node.names:
-        if not imports_submodule(filename, node.level, node.module, name.name):
-            yield _error_tuple(2041, node)
+        if not imports_submodule(
+            filename, node.level, node.module or "", name.name
+        ):
+            yield _error_tuple(241, node)
 
 
 def _imr242(
@@ -292,8 +294,10 @@ def _imr242(
     When using the "from" syntax, only module elements are imported, not submodules.
     """
     for name in node.names:
-        if imports_submodule(filename, node.level, node.module, name.name):
-            yield _error_tuple(2042, node)
+        if imports_submodule(
+            filename, node.level, node.module or "", name.name
+        ):
+            yield _error_tuple(242, node)
 
 
 def _imr243(node: ast.ImportFrom) -> Iterable[Tuple[int, int, str, type]]:
@@ -302,7 +306,7 @@ def _imr243(node: ast.ImportFrom) -> Iterable[Tuple[int, int, str, type]]:
     """
     for name in node.names:
         if name.name == "*":
-            yield _error_tuple(2043, node)
+            yield _error_tuple(243, node)
             break
 
 
@@ -311,11 +315,11 @@ def _imr244(node: ast.ImportFrom) -> Iterable[Tuple[int, int, str, type]]:
     Relative imports should not be used.
     """
     if node.level != 0:
-        yield _error_tuple(2044, node)
+        yield _error_tuple(244, node)
 
 
 def _imr245(node: ast.ImportFrom) -> Iterable[Tuple[int, int, str, type]]:
     """
     The "from" syntax should not be used.
     """
-    yield _error_tuple(2045, node)
+    yield _error_tuple(245, node)

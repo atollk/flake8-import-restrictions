@@ -32,9 +32,14 @@ class BaseTest(abc.ABC):
 
     def run_flake8(self, code: str) -> List[ReportedMessage]:
         (self.flake8_path / "example.py").write_text(textwrap.dedent(code))
-        args = [f"--{self.error_code().lower()}_include=*"]
+        args = [f"--{self.error_code().lower()}_include=*", "--select=IMR"]
         result = self.flake8_path.run_flake8(args)
-        return [ReportedMessage.from_raw(report) for report in result.out_lines if report.code == self.error_code()]
+        reports = [
+            ReportedMessage.from_raw(report) for report in result.out_lines
+        ]
+        return [
+            report for report in reports if report.code == self.error_code()
+        ]
 
     def assert_error_at(
         self,
