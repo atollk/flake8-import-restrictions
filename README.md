@@ -12,17 +12,17 @@ and the `from` syntax (`from X.Y import Z [as foo]`). It talks about
 segments (`as Z`).
 
 ## Options
-For every error `I20xx` listed below, there are options `--i20xx_include` and `--i20xx_exclude` 
+For every error `IMR2xx` listed below, there are options `--imr2xx_include` and `--imr2xx_exclude` 
 which are passed a comma separated list of UNIX wildcard patterns each. The error
 will then only be reported on imports of modules that match a include pattern but no exclude 
 pattern.
 
-By default, I2000, I2001, I2002, I2021, I2023, I2041, and I2043 include all (`*`) modules. Only I2041 excludes the
+By default, IMR200, IMR201, IMR202, IMR221, IMR223, IMR241, and IMR243 include all (`*`) modules. Only IMR241 excludes the
 `typing` module from checks, the other errors have no excludes by default.
 
 ## General Import Errors
 
-### I2000
+### IMR200
 Imports should only happen on module level, not locally.
 
 ```python
@@ -37,7 +37,7 @@ def f():
     return os.path.join("a", "b")
 ```
 
-### I2001
+### IMR201
 Alias identifiers defined from `as` segments should be at
 least two characters long.
 
@@ -49,7 +49,7 @@ import os.path as p
 import os.path as path
 ```
 
-### I2002
+### IMR202
 Alias identifiers should not have the same name as the imported object.
 
 ```python
@@ -62,7 +62,7 @@ import sys
 
 ## `import` Syntax Errors
 
-### I2020
+### IMR220
 When using the `import` syntax, if the imported module is a submodule,
 i.e. not a top level module, an `as` segment should be present.
 
@@ -75,7 +75,7 @@ import sys
 import os.path as path
 ```
 
-### I2021
+### IMR221
 When using the `import` syntax, each import statement should
 only import one module.
 
@@ -88,11 +88,11 @@ import sys
 import os
 ```
 
-### I2022
+### IMR222
 The `import` syntax should not be used.
 
 
-### I2023
+### IMR223
 When using the `import` syntax, do not duplicate module names in the `as`
 segment.
 
@@ -108,7 +108,7 @@ import os.path as ospath
 
 ## `from` Syntax Errors
 
-### I2040
+### IMR240
 When using the `from` syntax, the `import` segment only contains one
 import.
 
@@ -121,7 +121,7 @@ from os import path
 from os import environ
 ```
 
-### I2041
+### IMR241
 When using the `from` syntax, only submodules are imported, not
 module elements.
 
@@ -133,7 +133,7 @@ from os.path import join
 from os import path
 ```
 
-### I2042
+### IMR242
 When using the `from` syntax, only module elements are imported,
 not submodules.
 
@@ -145,7 +145,7 @@ from os import path
 from os.path import join
 ```
 
-### I2043
+### IMR243
 When using the `from` syntax, `import *` should not be used.
 
 ```python
@@ -156,7 +156,7 @@ from os.path import *
 from os.path import join
 ```
 
-### I2044
+### IMR244
 Relative imports should not be used.
 
 ```python
@@ -167,5 +167,5 @@ from . import foo
 from flake8_import_restrictions import foo
 ```
 
-### I2045
+### IMR245
 The `from` syntax should not be used.

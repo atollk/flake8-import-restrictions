@@ -1,9 +1,9 @@
 from tests.util import BaseTest
 
 
-class Test_I2021(BaseTest):
+class Test_IMR221(BaseTest):
     def error_code(self) -> str:
-        return "I2021"
+        return "IMR221"
 
     def test_pass_1(self):
         code = """
@@ -26,11 +26,11 @@ class Test_I2021(BaseTest):
         import os, sys
         """
         result = self.run_flake8(code)
-        self.assert_error_at(result, "I2021", 1, 1)
+        self.assert_error_at(result, "IMR221", 2, 1)
 
     def test_fail_2(self):
         code = """
         import curses.ascii, curses.panel
         """
         result = self.run_flake8(code)
-        self.assert_error_at(result, "I2021", 1, 1)
+        self.assert_error_at(result, "IMR221", 2, 1)

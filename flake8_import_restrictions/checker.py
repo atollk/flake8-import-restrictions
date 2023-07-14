@@ -14,30 +14,30 @@ import flake8.options.manager
 from flake8_import_restrictions.imports_submodule import imports_submodule
 
 ALL_ERRORS = {
-    2000,
-    2001,
-    2002,
-    2020,
-    2021,
-    2022,
-    2023,
-    2040,
-    2041,
-    2042,
-    2043,
-    2044,
-    2045,
+    200,
+    201,
+    202,
+    220,
+    221,
+    222,
+    223,
+    240,
+    241,
+    242,
+    243,
+    244,
+    245,
 }
 DEFAULT_INCLUDE = {
-    2000: ["*"],
-    2001: ["*"],
-    2002: ["*"],
-    2021: ["*"],
-    2023: ["*"],
-    2041: ["*"],
-    2043: ["*"],
+    200: ["*"],
+    201: ["*"],
+    202: ["*"],
+    221: ["*"],
+    223: ["*"],
+    241: ["*"],
+    243: ["*"],
 }
-DEFAULT_EXCLUDE = {2041: ["typing"]}
+DEFAULT_EXCLUDE = {241: ["typing"]}
 
 
 class ImportChecker:
@@ -60,20 +60,20 @@ class ImportChecker:
     def add_options(option_manager: flake8.options.manager.OptionManager):
         for error in ALL_ERRORS:
             option_manager.add_option(
-                f"--i{error}_include",
+                f"--imr{error}_include",
                 type=str,
                 comma_separated_list=True,
                 default=DEFAULT_INCLUDE.get(error, []),
                 parse_from_config=True,
-                help=f"List of modules that I{error} is applied to. Allows UNIX wildcards.",
+                help=f"List of modules that IMR{error} is applied to. Allows UNIX wildcards.",
             )
             option_manager.add_option(
-                f"--i{error}_exclude",
+                f"--imr{error}_exclude",
                 type=str,
                 comma_separated_list=True,
                 default=DEFAULT_EXCLUDE.get(error, []),
                 parse_from_config=True,
-                help=f"List of modules that I{error} is *not* applied to. Overwrites the _include flag. Allows UNIX wildcards.",
+                help=f"List of modules that IMR{error} is *not* applied to. Overwrites the _include flag. Allows UNIX wildcards.",
             )
 
     @staticmethod
@@ -84,8 +84,8 @@ class ImportChecker:
     ):
         for error in ALL_ERRORS:
             ImportChecker.targetted_modules[error] = (
-                getattr(options, f"i{error}_include"),
-                getattr(options, f"i{error}_exclude"),
+                getattr(options, f"imr{error}_include"),
+                getattr(options, f"imr{error}_exclude"),
             )
 
     def run(self) -> Iterable[Tuple[int, int, str, type]]:
@@ -95,71 +95,71 @@ class ImportChecker:
                 or isinstance(node, ast.FunctionDef)
                 or isinstance(node, ast.AsyncFunctionDef)
             ):
-                yield from _i2000(node, ImportChecker.targetted_modules[2000])
+                yield from _imr200(node, ImportChecker.targetted_modules[200])
 
             if isinstance(node, ast.Import):
-                if _applies_to(node, ImportChecker.targetted_modules[2001]):
-                    yield from _i2001(node)
-                if _applies_to(node, ImportChecker.targetted_modules[2002]):
-                    yield from _i2002(node)
-                if _applies_to(node, ImportChecker.targetted_modules[2020]):
-                    yield from _i2020(node)
-                if _applies_to(node, ImportChecker.targetted_modules[2021]):
-                    yield from _i2021(node)
-                if _applies_to(node, ImportChecker.targetted_modules[2022]):
-                    yield from _i2022(node)
-                if _applies_to(node, ImportChecker.targetted_modules[2023]):
-                    yield from _i2023(node)
+                if _applies_to(node, ImportChecker.targetted_modules[201]):
+                    yield from _imr201(node)
+                if _applies_to(node, ImportChecker.targetted_modules[202]):
+                    yield from _imr202(node)
+                if _applies_to(node, ImportChecker.targetted_modules[220]):
+                    yield from _imr220(node)
+                if _applies_to(node, ImportChecker.targetted_modules[221]):
+                    yield from _imr221(node)
+                if _applies_to(node, ImportChecker.targetted_modules[222]):
+                    yield from _imr222(node)
+                if _applies_to(node, ImportChecker.targetted_modules[223]):
+                    yield from _imr223(node)
 
             if isinstance(node, ast.ImportFrom):
-                if _applies_to(node, ImportChecker.targetted_modules[2001]):
-                    yield from _i2001(node)
-                if _applies_to(node, ImportChecker.targetted_modules[2002]):
-                    yield from _i2002(node)
-                if _applies_to(node, ImportChecker.targetted_modules[2040]):
-                    yield from _i2040(node)
-                if _applies_to(node, ImportChecker.targetted_modules[2041]):
-                    yield from _i2041(node, self.filename)
-                if _applies_to(node, ImportChecker.targetted_modules[2042]):
-                    yield from _i2042(node, self.filename)
-                if _applies_to(node, ImportChecker.targetted_modules[2043]):
-                    yield from _i2043(node)
-                if _applies_to(node, ImportChecker.targetted_modules[2044]):
-                    yield from _i2044(node)
-                if _applies_to(node, ImportChecker.targetted_modules[2045]):
-                    yield from _i2045(node)
+                if _applies_to(node, ImportChecker.targetted_modules[201]):
+                    yield from _imr201(node)
+                if _applies_to(node, ImportChecker.targetted_modules[202]):
+                    yield from _imr202(node)
+                if _applies_to(node, ImportChecker.targetted_modules[240]):
+                    yield from _imr240(node)
+                if _applies_to(node, ImportChecker.targetted_modules[241]):
+                    yield from _imr241(node, self.filename)
+                if _applies_to(node, ImportChecker.targetted_modules[242]):
+                    yield from _imr242(node, self.filename)
+                if _applies_to(node, ImportChecker.targetted_modules[243]):
+                    yield from _imr243(node)
+                if _applies_to(node, ImportChecker.targetted_modules[244]):
+                    yield from _imr244(node)
+                if _applies_to(node, ImportChecker.targetted_modules[245]):
+                    yield from _imr245(node)
 
 
 ERROR_MESSAGES = {
-    2000: "Imports are only allowed on module level.",
-    2001: "Import aliases must be at least two characters long.",
-    2002: "Import alias has no effect.",
-    2020: "Missing import alias for non-trivial import.",
-    2021: "Multiple imports in one import statement.",
-    2022: "import statements are forbidden.",
-    2023: "import statements with alias must not contain duplicate module names.",
-    2040: "Multiple imports in one from-import statement.",
-    2041: "from-import statements must only import modules.",
-    2042: "from-import statements must not import modules.",
-    2043: "'import *' is forbidden.",
-    2044: "Relative imports are forbidden.",
-    2045: "from-import statements are forbidden.",
+    200: "Imports are only allowed on module level.",
+    201: "Import aliases must be at least two characters long.",
+    202: "Import alias has no effect.",
+    220: "Missing import alias for non-trivial import.",
+    221: "Multiple imports in one import statement.",
+    222: "import statements are forbidden.",
+    223: "import statements with alias must not contain duplicate module names.",
+    240: "Multiple imports in one from-import statement.",
+    241: "from-import statements must only import modules.",
+    242: "from-import statements must not import modules.",
+    243: "'import *' is forbidden.",
+    244: "Relative imports are forbidden.",
+    245: "from-import statements are forbidden.",
 }
 
 ERROR_HINTS = {
-    2000: "Move this import to the top of the file.",
-    2001: 'Choose a longer alias after the "as" keyword.',
-    2002: 'Remove the "as" keyword and following alias.',
-    2020: 'Use "as" keyword and provide a shorter alias.',
-    2021: "Split onto multiple lines.",
-    2022: 'Use "from" syntax instead.',
-    2023: 'Use "from" syntax instead or choose a different alias.',
-    2040: "Split onto multiple lines.",
-    2041: "Import the containing module instead.",
-    2042: "Import functions/classes directly instead.",
-    2043: "Import individual elements instead.",
-    2044: "Change the imported module to an absolute path.",
-    2045: 'Use the "import" syntax instead.',
+    200: "Move this import to the top of the file.",
+    201: 'Choose a longer alias after the "as" keyword.',
+    202: 'Remove the "as" keyword and following alias.',
+    220: 'Use "as" keyword and provide a shorter alias.',
+    221: "Split onto multiple lines.",
+    222: 'Use "from" syntax instead.',
+    223: 'Use "from" syntax instead or choose a different alias.',
+    240: "Split onto multiple lines.",
+    241: "Import the containing module instead.",
+    242: "Import functions/classes directly instead.",
+    243: "Import individual elements instead.",
+    244: "Change the imported module to an absolute path.",
+    245: 'Use the "import" syntax instead.',
 }
 
 
@@ -167,7 +167,7 @@ def _error_tuple(error_code: int, node: ast.AST) -> Tuple[int, int, str, type]:
     return (
         node.lineno,
         node.col_offset,
-        f"I{error_code} {ERROR_MESSAGES[error_code]} (hint: {ERROR_HINTS[error_code]})",
+        f"IMR{error_code} {ERROR_MESSAGES[error_code]} (hint: {ERROR_HINTS[error_code]})",
         ImportChecker,
     )
 
@@ -195,7 +195,7 @@ def _applies_to(
     return False
 
 
-def _i2000(
+def _imr200(
     node: Union[ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef],
     incexclude: Tuple[List[str], List[str]],
 ) -> Iterable[Tuple[int, int, str, type]]:
@@ -207,10 +207,10 @@ def _i2000(
             ancestor, ast.ImportFrom
         ):
             if _applies_to(ancestor, incexclude):
-                yield _error_tuple(2000, ancestor)
+                yield _error_tuple(200, ancestor)
 
 
-def _i2001(
+def _imr201(
     node: Union[ast.Import, ast.ImportFrom]
 ) -> Iterable[Tuple[int, int, str, type]]:
     """
@@ -218,10 +218,10 @@ def _i2001(
     """
     for name in node.names:
         if name.asname and len(name.asname) == 1:
-            yield _error_tuple(2001, node)
+            yield _error_tuple(201, node)
 
 
-def _i2002(
+def _imr202(
     node: Union[ast.Import, ast.ImportFrom]
 ) -> Iterable[Tuple[int, int, str, type]]:
     """
@@ -229,93 +229,97 @@ def _i2002(
     """
     for name in node.names:
         if name.name == name.asname:
-            yield _error_tuple(2002, node)
+            yield _error_tuple(202, node)
 
 
-def _i2020(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
+def _imr220(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
     """
     When using the import syntax, if the imported module is a submodule, i.e. not a top level module, an "as" segment should be present.
     """
     for name in node.names:
         if "." in name.name and not name.asname:
-            yield _error_tuple(2020, node)
+            yield _error_tuple(220, node)
             break
 
 
-def _i2021(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
+def _imr221(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
     """
     When using the import syntax, each import statement should only import one module.
     """
     if len(node.names) > 1:
-        yield _error_tuple(2021, node)
+        yield _error_tuple(221, node)
 
 
-def _i2022(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
+def _imr222(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
     """
     The import syntax should not be used.
     """
-    yield _error_tuple(2022, node)
+    yield _error_tuple(222, node)
 
 
-def _i2023(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
+def _imr223(node: ast.Import) -> Iterable[Tuple[int, int, str, type]]:
     """
     When using the `import` syntax, do not duplicate module names in the `as` segment.
     """
     for name in node.names:
         if name.name.split(".")[-1] == name.asname:
-            yield _error_tuple(2023, node)
+            yield _error_tuple(223, node)
 
 
-def _i2040(node: ast.ImportFrom) -> Iterable[Tuple[int, int, str, type]]:
+def _imr240(node: ast.ImportFrom) -> Iterable[Tuple[int, int, str, type]]:
     """
-    When using the from syntax, the import segment only contains one import.
+    When using the "from" syntax, the import segment only contains one import.
     """
     if len(node.names) > 1:
-        yield _error_tuple(2040, node)
+        yield _error_tuple(240, node)
 
 
-def _i2041(
+def _imr241(
     node: ast.ImportFrom, filename: str
 ) -> Iterable[Tuple[int, int, str, type]]:
     """
-    When using the from syntax, only submodules are imported, not module elements.
+    When using the "from" syntax, only submodules are imported, not module elements.
     """
     for name in node.names:
-        if not imports_submodule(filename, node.level, node.module, name.name):
-            yield _error_tuple(2041, node)
+        if not imports_submodule(
+            filename, node.level, node.module or "", name.name
+        ):
+            yield _error_tuple(241, node)
 
 
-def _i2042(
+def _imr242(
     node: ast.ImportFrom, filename: str
 ) -> Iterable[Tuple[int, int, str, type]]:
     """
-    When using the from syntax, only module elements are imported, not submodules.
+    When using the "from" syntax, only module elements are imported, not submodules.
     """
     for name in node.names:
-        if imports_submodule(filename, node.level, node.module, name.name):
-            yield _error_tuple(2042, node)
+        if imports_submodule(
+            filename, node.level, node.module or "", name.name
+        ):
+            yield _error_tuple(242, node)
 
 
-def _i2043(node: ast.ImportFrom) -> Iterable[Tuple[int, int, str, type]]:
+def _imr243(node: ast.ImportFrom) -> Iterable[Tuple[int, int, str, type]]:
     """
-    When using the from syntax, import * should not be used.
+    When using the "from" syntax, import * should not be used.
     """
     for name in node.names:
         if name.name == "*":
-            yield _error_tuple(2043, node)
+            yield _error_tuple(243, node)
             break
 
 
-def _i2044(node: ast.ImportFrom) -> Iterable[Tuple[int, int, str, type]]:
+def _imr244(node: ast.ImportFrom) -> Iterable[Tuple[int, int, str, type]]:
     """
     Relative imports should not be used.
     """
     if node.level != 0:
-        yield _error_tuple(2044, node)
+        yield _error_tuple(244, node)
 
 
-def _i2045(node: ast.ImportFrom) -> Iterable[Tuple[int, int, str, type]]:
+def _imr245(node: ast.ImportFrom) -> Iterable[Tuple[int, int, str, type]]:
     """
-    The from syntax should not be used.
+    The "from" syntax should not be used.
     """
-    yield _error_tuple(2045, node)
+    yield _error_tuple(245, node)

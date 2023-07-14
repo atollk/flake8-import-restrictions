@@ -30,7 +30,7 @@ def imports_submodule(
 
     try:
         parent = importlib.import_module("." * level + from_, package)
-    except ImportError:
+    except (ImportError, TypeError):
         return None
     if not hasattr(parent, import_):
         try:
