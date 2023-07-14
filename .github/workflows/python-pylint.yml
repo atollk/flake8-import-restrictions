@@ -22,4 +22,4 @@ jobs:
           pip install pylint -r requirements/py311.txt
       - name: pylint
         run: |
-          python -m pylint flake8_multiline_conditionals_comprehensions/*.py -E
+          python -m pylint flake8_import_restrictions/*.py -E
