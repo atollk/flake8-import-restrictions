@@ -1,9 +1,8 @@
 import abc
 import dataclasses
-import os
 import re
 import textwrap
-from typing import List
+from typing import List, Dict
 import pytest_flake8_path
 import pytest
 
@@ -31,7 +30,7 @@ class BaseTest(abc.ABC):
     def _flake8dir(self, flake8_path: pytest_flake8_path.Flake8Path):
         self.flake8_path = flake8_path
 
-    def run_flake8_multifile(self, files: dict[str, str]):
+    def run_flake8_multifile(self, files: Dict[str, str]):
         for fname, code in files.items():
             (self.flake8_path / fname).parent.mkdir(parents=True, exist_ok=True)
             (self.flake8_path / fname).write_text(textwrap.dedent(code))
