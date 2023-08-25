@@ -184,8 +184,12 @@ def _applies_to(
     for module in modules:
         if not module:  # "from ." causes module to be None
             module = ""
-        includes = any(fnmatch.fnmatch(module, target) for target in incexclude[0])
-        excludes = any(fnmatch.fnmatch(module, target) for target in incexclude[1])
+        includes = any(
+            fnmatch.fnmatch(module, target) for target in incexclude[0]
+        )
+        excludes = any(
+            fnmatch.fnmatch(module, target) for target in incexclude[1]
+        )
         if includes and not excludes:
             return True
     return False
@@ -199,7 +203,9 @@ def _imr200(
     Imports should only happen on module level, not locally.
     """
     for ancestor in ast.walk(node):
-        if isinstance(ancestor, ast.Import) or isinstance(ancestor, ast.ImportFrom):
+        if isinstance(ancestor, ast.Import) or isinstance(
+            ancestor, ast.ImportFrom
+        ):
             if _applies_to(ancestor, incexclude):
                 yield _error_tuple(200, ancestor)
 
@@ -275,7 +281,9 @@ def _imr241(
     When using the "from" syntax, only submodules are imported, not module elements.
     """
     for name in node.names:
-        if not imports_submodule(filename, node.level, node.module or "", name.name):
+        if not imports_submodule(
+            filename, node.level, node.module or "", name.name
+        ):
             yield _error_tuple(241, node)
 
 
@@ -286,7 +294,9 @@ def _imr242(
     When using the "from" syntax, only module elements are imported, not submodules.
     """
     for name in node.names:
-        if imports_submodule(filename, node.level, node.module or "", name.name):
+        if imports_submodule(
+            filename, node.level, node.module or "", name.name
+        ):
             yield _error_tuple(242, node)
 
 

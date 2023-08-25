@@ -21,7 +21,9 @@ class Test_IncludeExclude:
             "--select=IMR",
         ]
         result = self.flake8_path.run_flake8(args)
-        reports = [ReportedMessage.from_raw(report) for report in result.out_lines]
+        reports = [
+            ReportedMessage.from_raw(report) for report in result.out_lines
+        ]
         return [report for report in reports if report.code == "IMR222"]
 
     def test_1(self):
