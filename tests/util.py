@@ -1,9 +1,10 @@
 import abc
 import dataclasses
+import os
 import re
 import textwrap
 from typing import List
-
+import pytest_flake8_path
 import pytest
 
 
@@ -27,19 +28,24 @@ class BaseTest(abc.ABC):
         raise NotImplementedError
 
     @pytest.fixture(autouse=True)
-    def _flake8dir(self, flake8_path):
+    def _flake8dir(self, flake8_path: pytest_flake8_path.Flake8Path):
         self.flake8_path = flake8_path
+
+    def run_flake8_multifile(self, files: dict[str, str]):
+        for fname, code in files.items():
+            (self.flake8_path / fname).parent.mkdir(parents=True, exist_ok=True)
+            (self.flake8_path / fname).write_text(textwrap.dedent(code))
+        args = [f"--{self.error_code().lower()}_include=*", "--select=IMR"]
+        result = self.flake8_path.run_flake8(args)
+        reports = [ReportedMessage.from_raw(report) for report in result.out_lines]
+        return [report for report in reports if report.code == self.error_code()]
 
     def run_flake8(self, code: str) -> List[ReportedMessage]:
         (self.flake8_path / "example.py").write_text(textwrap.dedent(code))
         args = [f"--{self.error_code().lower()}_include=*", "--select=IMR"]
         result = self.flake8_path.run_flake8(args)
-        reports = [
-            ReportedMessage.from_raw(report) for report in result.out_lines
-        ]
-        return [
-            report for report in reports if report.code == self.error_code()
-        ]
+        reports = [ReportedMessage.from_raw(report) for report in result.out_lines]
+        return [report for report in reports if report.code == self.error_code()]
 
     def assert_error_at(
         self,
@@ -49,9 +55,7 @@ class BaseTest(abc.ABC):
         col: int,
     ) -> None:
         error_found = any(
-            report.line == line
-            and report.col == col
-            and report.code == error_code
+            report.line == line and report.col == col and report.code == error_code
             for report in reported_errors
         )
         if not error_found:

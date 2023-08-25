@@ -33,3 +33,17 @@ class Test_IMR241(BaseTest):
         """
         result = self.run_flake8(code)
         self.assert_error_at(result, "IMR241", 2, 1)
+
+    def test_issue_14(self):
+        main_code = """
+        from test.test2 import testmodule
+        from test import test2
+        """
+        files = {
+            "main.py": main_code,
+            "test/__init__.py": "",
+            "test/test2/__init__.py": "",
+            "test/test2/testmodule.py": "",
+        }
+        result = self.run_flake8_multifile(files)
+        assert result == []

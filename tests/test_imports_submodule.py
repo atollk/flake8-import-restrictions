@@ -14,6 +14,7 @@ def test_absolute_1():
 
 
 def test_absolute_2():
+    assert imports_submodule(FILE1, 0, "tests.resources", "a")
     assert imports_submodule(FILE1, 0, "tests.resources", "b")
     assert not imports_submodule(FILE1, 0, "tests.resources.b", "B")
     assert not imports_submodule(FILE1, 0, "tests.resources.b", "C")

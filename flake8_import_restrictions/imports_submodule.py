@@ -19,27 +19,30 @@ def imports_submodule(
     :return None, if an error occurs, e.g. the given file is not part of any directory in sys.path. Otherwise,
     a bool is returned that is True if and only if the imported object is a module.
     """
-    if level > 0:
-        try:
-            filename = os.path.dirname(_rel_to_sys_path(filename))
-        except TypeError:
-            return None
-        package = ".".join(filename.split(os.path.sep))
-    else:
-        package = None
-
+    old_sys_path = sys.path
     try:
-        parent = importlib.import_module("." * level + from_, package)
-    except (ImportError, TypeError):
-        return None
-    if not hasattr(parent, import_):
+        sys.path += [os.getcwd()]
+        if level > 0:
+            try:
+                filename = os.path.dirname(_rel_to_sys_path(filename))
+            except TypeError:
+                return None
+            package = ".".join(filename.split(os.path.sep))
+        else:
+            package = None
+
         try:
-            importlib.import_module(
-                "." * level + from_ + "." + import_, package
-            )
-        except ImportError:
-            return False
-    return isinstance(getattr(parent, import_), types.ModuleType)
+            parent = importlib.import_module("." * level + from_, package)
+        except (ImportError, TypeError):
+            return None
+        if not hasattr(parent, import_):
+            try:
+                importlib.import_module("." * level + from_ + "." + import_, package)
+            except ImportError:
+                return False
+        return isinstance(getattr(parent, import_), types.ModuleType)
+    finally:
+        sys.path = old_sys_path
 
 
 def _rel_to_sys_path(path: str) -> str:
