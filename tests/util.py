@@ -2,8 +2,8 @@ import abc
 import dataclasses
 import re
 import textwrap
-from typing import List
-
+from typing import List, Dict
+import pytest_flake8_path
 import pytest
 
 
@@ -27,8 +27,21 @@ class BaseTest(abc.ABC):
         raise NotImplementedError
 
     @pytest.fixture(autouse=True)
-    def _flake8dir(self, flake8_path):
+    def _flake8dir(self, flake8_path: pytest_flake8_path.Flake8Path):
         self.flake8_path = flake8_path
+
+    def run_flake8_multifile(self, files: Dict[str, str]):
+        for fname, code in files.items():
+            (self.flake8_path / fname).parent.mkdir(parents=True, exist_ok=True)
+            (self.flake8_path / fname).write_text(textwrap.dedent(code))
+        args = [f"--{self.error_code().lower()}_include=*", "--select=IMR"]
+        result = self.flake8_path.run_flake8(args)
+        reports = [
+            ReportedMessage.from_raw(report) for report in result.out_lines
+        ]
+        return [
+            report for report in reports if report.code == self.error_code()
+        ]
 
     def run_flake8(self, code: str) -> List[ReportedMessage]:
         (self.flake8_path / "example.py").write_text(textwrap.dedent(code))
