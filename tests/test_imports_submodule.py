@@ -37,3 +37,7 @@ def test_relative_2():
 def test_relative_3():
     assert imports_submodule(FILE3, 3, "resources.a", "c")
     assert not imports_submodule(FILE3, 3, "resources.b", "B")
+
+
+def test_non_existant():
+    assert not imports_submodule(FILE1, 1, "a", "DOESNOTEXIST")
