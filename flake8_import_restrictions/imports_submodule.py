@@ -42,6 +42,11 @@ def imports_submodule(
                 )
             except ImportError:
                 return False
+            except ValueError:  # only relevant for Python 3.8
+                if sys.version_info[1] <= 8:
+                    return False
+                else:
+                    raise
         return isinstance(getattr(parent, import_), types.ModuleType)
     finally:
         sys.path = old_sys_path
