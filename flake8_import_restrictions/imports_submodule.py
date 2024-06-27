@@ -36,9 +36,12 @@ def imports_submodule(
         except (ImportError, TypeError):
             return None
         if not hasattr(parent, import_):
-            importlib.import_module(
-                "." * level + from_ + "." + import_, package
-            )
+            try:
+                importlib.import_module(
+                    "." * level + from_ + "." + import_, package
+                )
+            except ImportError:
+                return False
         return isinstance(getattr(parent, import_), types.ModuleType)
     finally:
         sys.path = old_sys_path
