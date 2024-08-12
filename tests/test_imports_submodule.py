@@ -1,4 +1,5 @@
 import os.path
+import sys
 
 from flake8_import_restrictions.imports_submodule import imports_submodule
 
@@ -26,9 +27,6 @@ def test_relative_1():
     assert not imports_submodule(FILE1, 1, "resources.a.c", "C")
     assert imports_submodule(FILE2, 1, "a", "c")
     assert not imports_submodule(FILE2, 1, "a.c", "C")
-    # Check that the empty `from_` is handled correctly.
-    # For the complete code to run, we need to check a not-yet imported module
-    assert not imports_submodule(FILE1, 1, "", "not_existing_module")
 
 
 def test_relative_2():
@@ -44,3 +42,24 @@ def test_relative_3():
 
 def test_non_existant():
     assert not imports_submodule(FILE1, 1, "a", "DOESNOTEXIST")
+
+
+def test_relative_empty_from():
+    # Check that the empty `from_` is handled correctly.
+    # There have been issues with the relative import level in the past, so we want to make sure, there are no
+    # "relative import beyond top-level package" exceptions. Thus, we need to change the Python Path (which is set to
+    # the current working directory by imports_submodule() internally) to be as close as possible to the (imaginative)
+    # file which is checked (`filename`).
+    old_sys_path = sys.path
+    sys.path = []
+    old_cwd = os.getcwd()
+    os.chdir(os.path.dirname(__file__))
+    try:
+        # For the complete code to run, we need to check not-yet imported modules
+        assert imports_submodule(FILE2, 1, "", "not_existing_module") is False
+        assert imports_submodule(FILE2, 1, "", "d") is True
+        assert imports_submodule(FILE2, 1, "", "d.B") is False
+
+    finally:
+        os.chdir(old_cwd)
+        sys.path = old_sys_path
