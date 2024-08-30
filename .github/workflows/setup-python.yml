@@ -1,0 +1,26 @@
+name: setup-python.yml
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        required: true
+        type: string
+      poetry-version:
+        required: false
+        type: string
+        default: 1.8.3
+    secrets: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up Python ${{ inputs.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ inputs.python-version }}
+      - name: Set up poetry
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: ${{ inputs.poetry-version }}
