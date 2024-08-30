@@ -10,6 +10,7 @@ jobs:
         python-version: [3.12]
 
     steps:
+      - uses: actions/checkout@v1
       - uses: ./.github/workflows/setup-python.yml
         with:
           python-version: ${{ matrix.python-version }}
