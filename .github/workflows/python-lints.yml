@@ -1,22 +1,23 @@
-name: tox
+name: black
 on: [push, pull_request]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
-
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python 3.12
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.12
       - name: Set up poetry
         uses: abatilo/actions-poetry@v2
         with:
           poetry-version: 1.8.3
-      - name: Test with tox
-        run: tox
+      - name: black
+        if: ${{ ! cancelled() }}
+        run: poetry run black . --check -l 80
+      - name: pylint
+        run: poetry run pylint flake8_import_restrictions/*.py -
+      - name: flake8
+        run: poetry run flake8 .
