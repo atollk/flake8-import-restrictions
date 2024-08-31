@@ -14,6 +14,8 @@ jobs:
         uses: abatilo/actions-poetry@v2
         with:
           poetry-version: 1.8.3
+      - name: Install dependencies
+        run: poetry install --with dev
       - name: black
         if: ${{ ! cancelled() }}
         run: poetry run black . --check -l 80
