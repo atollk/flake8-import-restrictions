@@ -18,6 +18,8 @@ jobs:
         if: ${{ ! cancelled() }}
         run: poetry run black . --check -l 80
       - name: pylint
+        if: ${{ ! cancelled() }}
         run: poetry run pylint flake8_import_restrictions/*.py -
       - name: flake8
+        if: ${{ ! cancelled() }}
         run: poetry run flake8 .
