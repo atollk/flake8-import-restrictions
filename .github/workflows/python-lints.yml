@@ -21,7 +21,7 @@ jobs:
         run: poetry run black . --check -l 80
       - name: pylint
         if: ${{ ! cancelled() }}
-        run: poetry run pylint flake8_import_restrictions/*.py -
+        run: poetry run pylint flake8_import_restrictions/*.py -E
       - name: flake8
         if: ${{ ! cancelled() }}
         run: poetry run flake8 . --select=E9,F63,F7,F82
