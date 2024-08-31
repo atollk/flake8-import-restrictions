@@ -1,0 +1,33 @@
+name: lint
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
+      - name: Set up poetry
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: 1.8.3
+      - name: Install dependencies
+        run: poetry install --with dev
+      - name: black
+        if: ${{ ! cancelled() }}
+        run: poetry run black . --check -l 80
+      - name: pylint
+        if: ${{ ! cancelled() }}
+        run: poetry run pylint flake8_import_restrictions/*.py -E
+      - name: flake8
+        if: ${{ ! cancelled() }}
+        run: poetry run flake8 . --select=E9,F63,F7,F82
